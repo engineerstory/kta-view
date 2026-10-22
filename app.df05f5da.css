@@ -1,0 +1,95 @@
+html { visibility: hidden; }
+
+  :root {
+    --bg: #F3F4F1; --fg: #18201C; --sub: #4A544E; --line: #DDE1DC; --accent: #1E6B52;
+    --warn-bg: #FFF1DC; --warn: #7A4300; --del-bg: #F5E7E4; --del: #8E2F22; --card: #FFFFFF;
+    --nav-h: 64px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, -apple-system, sans-serif;
+    font-size: 15px; line-height: 1.45; -webkit-text-size-adjust: 100%; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  .hidden { display: none !important; }
+  header { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 14px 16px 8px; }
+  header h1 { font-size: 22px; font-weight: 600; margin: 0; }
+  main { padding: 0 16px calc(var(--nav-h) + 24px); max-width: 640px; margin: 0 auto; }
+  .searchbox { display: flex; align-items: center; gap: 8px; min-height: 44px; margin-top: 10px; padding: 0 12px; background: var(--card);
+    border: 1px solid var(--line); border-radius: 12px; color: var(--sub); width: 100%; text-align: left; }
+  .searchbox input { border: 0; outline: 0; flex: 1; min-width: 0; min-height: 42px; background: transparent; }
+  .searchbox .icon { flex: 0 0 44px; margin-right: -8px; }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 2px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: 0 0 auto; min-height: 36px; padding: 0 14px; border-radius: 18px; border: 1px solid var(--line); background: var(--card); white-space: nowrap; }
+  .chip.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chip.review { background: var(--warn-bg); border-color: var(--warn-bg); color: var(--warn); }
+  .chip.review.on { outline: 2px solid var(--warn); }
+  .chip.cleanup { background: var(--del-bg); border-color: var(--del-bg); color: var(--del); }
+  .chip.cleanup.on { outline: 2px solid var(--del); }
+  .toolbar { display: flex; align-items: center; justify-content: space-between; margin: 10px 0 8px; color: var(--sub); font-size: 14px; }
+  .btn { min-height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.danger { background: var(--del-bg); border-color: var(--del-bg); color: var(--del); }
+  .btn.small { min-height: 36px; padding: 0 12px; font-size: 14px; }
+  .card { display: flex; gap: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; margin-bottom: 10px; }
+  .card .body { flex: 1; min-width: 0; }
+  .thumb { flex: 0 0 56px; width: 56px; height: 56px; border-radius: 10px; background: #E8EBE6; display: flex; align-items: center; justify-content: center;
+    overflow: hidden; color: var(--sub); }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .thumb.missing { background: transparent; border: 1.5px dashed var(--line); }
+  .title { font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-all; }
+  .meta { color: var(--sub); font-size: 13px; margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .summary { margin-top: 6px; font-size: 14px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    white-space: pre-line; word-break: break-all; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .badge { font-size: 12px; padding: 2px 8px; border-radius: 10px; background: #E8EBE6; color: var(--sub); }
+  .badge.review { background: var(--warn-bg); color: var(--warn); }
+  .badge.cleanup { background: var(--del-bg); color: var(--del); }
+  .actions { display: flex; flex-direction: column; justify-content: space-between; }
+  .icon { width: 44px; height: 44px; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; color: var(--sub); border-radius: 10px; }
+  .icon.on { color: var(--accent); }
+  .icon.on svg { fill: currentColor; }
+  .skeleton .thumb, .skeleton .bar { background: #E6E9E4; }
+  .skeleton .bar { height: 12px; border-radius: 6px; margin: 6px 0; }
+  .empty { text-align: center; color: var(--sub); padding: 40px 0; }
+  .notice { background: var(--warn-bg); color: var(--warn); border-radius: 12px; padding: 12px 14px; margin: 12px 0; }
+  mark { background: #DDEFE6; color: inherit; border-radius: 3px; }
+  nav { position: fixed; left: 0; right: 0; bottom: 0; height: var(--nav-h); background: var(--card); border-top: 1px solid var(--line);
+    display: flex; justify-content: space-around; padding-bottom: env(safe-area-inset-bottom); z-index: 10; }
+  nav button { flex: 1; border: 0; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    color: var(--sub); font-size: 12px; min-height: 44px; }
+  nav button.on { color: var(--accent); font-weight: 600; }
+  .sheet-bg { position: fixed; inset: 0; background: rgba(24,32,28,.35); z-index: 20; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; max-height: 85vh; overflow-y: auto; background: var(--bg); border-radius: 18px 18px 0 0;
+    padding: 16px 16px calc(16px + env(safe-area-inset-bottom)); z-index: 21; }
+  .sheet h2, .section h2 { font-size: 16px; margin: 16px 0 8px; }
+  .opt { display: flex; flex-wrap: wrap; gap: 8px; }
+  .detail { position: fixed; inset: 0; background: var(--bg); z-index: 15; overflow-y: auto; padding-bottom: 96px; }
+  .detail .top { position: sticky; top: 0; background: var(--bg); display: flex; align-items: center; gap: 4px; padding: 6px 8px; z-index: 2; }
+  .detail .hero { width: 100%; max-height: 320px; object-fit: contain; background: #E8EBE6; display: block; }
+  .detail .hero-box { background: #E8EBE6; min-height: 120px; display: flex; align-items: center; justify-content: center; color: var(--sub); }
+  .detail .pad { padding: 0 16px; }
+  .detail h1 { font-size: 20px; margin: 12px 0 4px; word-break: break-all; }
+  .band { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--warn-bg); color: var(--warn);
+    border-radius: 12px; padding: 8px 8px 8px 14px; margin: 12px 0; }
+  select, textarea, input[type=text] { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); padding: 8px 12px; }
+  textarea { min-height: 96px; resize: vertical; }
+  .text { white-space: pre-wrap; word-break: break-all; }
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+  details summary { min-height: 28px; cursor: pointer; }
+  .bottom { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 8px; padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+    background: var(--bg); border-top: 1px solid var(--line); z-index: 16; }
+  .bottom .btn { flex: 1; }
+  .row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .row input[type=text] { flex: 1; }
+  .switch { display: flex; align-items: center; justify-content: space-between; min-height: 52px; border-bottom: 1px solid var(--line); gap: 12px; }
+  .switch input { width: 48px; height: 28px; accent-color: var(--accent); }
+  .toast { position: fixed; left: 16px; right: 16px; bottom: calc(var(--nav-h) + 12px); background: var(--fg); color: #fff; border-radius: 12px;
+    padding: 10px 12px 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; z-index: 30; }
+  .toast button { background: transparent; border: 0; color: #9FE0C4; font-weight: 600; min-height: 36px; }
+  .muted { color: var(--sub); font-size: 13px; }
+  .aibar { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--card); border: 1px solid var(--accent);
+    border-radius: 12px; padding: 10px 12px; margin: 10px 0 0; }
+  .aiform { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin: 8px 0 0; }
+  .aiform ol { padding-left: 18px; margin: 6px 0 8px; } .aiform li { margin: 4px 0; }
+  .aiform input { width: 100%; box-sizing: border-box; min-height: 44px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; font-size: 16px; }

@@ -1,14 +1,113 @@
 <!doctype html>
 <html lang="ko"><head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src https://script.google.com https://*.googleusercontent.com; connect-src https://script.google.com https://*.googleusercontent.com; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src https: data:; connect-src https://script.google.com https://*.googleusercontent.com; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KTA</title>
-<link rel="stylesheet" href="app.css">
-</head><body>
-<h1>KTA 보관함 시험</h1>
-<pre id="out">확인 중…</pre>
-<div id="fill">전체 높이 확인용 띠(화면 맨 아래에 붙어 보여야 정상)</div>
-<script src="app.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KTA 보관함</title>
+<link rel="stylesheet" href="app.df05f5da.css">
+</head>
+<body>
+<header>
+  <h1 id="title">보관함</h1>
+</header>
+<main>
+  <!-- ① 보관함 -->
+  <section id="tab-list">
+    <button class="searchbox" id="fake-search" type="button"><span data-icon="search"></span><span>제목·요약·사진 속 글자·메모 검색</span></button>
+    <div id="ai-bar" class="aibar hidden"><span><b>AI 정리 켜기</b><br><span class="muted" id="ai-wait">무료 키 1분이면 됩니다</span></span>
+      <button class="btn small primary" id="ai-open" type="button">켜기</button></div>
+    <div id="ai-form" class="aiform hidden">
+      <ol><li><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">AI Studio 열기</a> → <b>Create API key</b>(<b>Set up billing</b>은 누르지 않음)</li>
+        <li>만든 키를 복사해 아래 칸에 붙여 넣기. 키는 이 칸에만 넣고 메모·메일·카톡에 두지 마세요.</li></ol>
+      <input type="password" id="ai-key" autocomplete="off" spellcheck="false" placeholder="API 키 붙여넣기">
+      <button class="btn primary" id="ai-save" type="button" data-st="width:100%;margin-top:8px">확인하고 저장</button>
+      <p class="muted" id="ai-msg"></p></div>
+    <div class="chips" id="cats"></div>
+    <div class="chips" id="states"></div>
+    <div class="toolbar"><span id="list-info"></span><span>최신순</span></div>
+    <div id="bulk" class="hidden" data-st="margin-bottom:10px"><button class="btn danger" id="bulk-trash" type="button"></button></div>
+    <div id="auth" class="notice hidden"></div>
+    <div id="list"></div>
+    <div id="more" class="empty hidden">불러오는 중…</div>
+  </section>
+  <!-- ② 검색·필터 -->
+  <section id="tab-search" class="hidden">
+    <div class="searchbox"><span data-icon="search"></span><input id="q" type="search" placeholder="검색어" enterkeyhint="search" autocomplete="off">
+      <button class="icon" id="open-filter" type="button" aria-label="필터"><span data-icon="filter"></span></button></div>
+    <div class="chips" id="filter-summary"></div>
+    <div id="recent-box"><h2 class="muted" data-st="font-size:14px;margin:14px 0 6px">최근 검색어</h2><div class="chips" id="recent"></div></div>
+    <div id="search-info" class="toolbar"></div>
+    <div id="results"></div>
+    <div id="more-s" class="empty hidden">불러오는 중…</div>
+  </section>
+  <!-- ④ 휴지통 -->
+  <section id="tab-trash" class="hidden">
+    <p class="muted" id="trash-note"></p>
+    <div id="trash"></div>
+    <button class="btn danger hidden" id="empty-trash" type="button" data-st="width:100%;margin-top:8px">휴지통 지금 비우기</button>
+  </section>
+  <!-- ⑤ 설정 -->
+  <section id="tab-settings" class="hidden">
+    <div class="section"><h2>카테고리</h2><p class="muted">순서는 보관함 칩 순서입니다. '기타'는 지울 수 없고, 지운 카테고리의 항목은 '기타'로 옮겨집니다.</p>
+      <div id="cat-edit"></div>
+      <div class="row"><input type="text" id="cat-new" placeholder="새 카테고리" maxlength="30"><button class="btn small" id="cat-add" type="button">추가</button></div>
+      <button class="btn primary" id="cat-save" type="button" data-st="width:100%">카테고리 저장</button></div>
+    <div class="section"><h2>자동 정리</h2>
+      <label class="switch"><span>공유 항목 자동 분류<br><span class="muted">5분마다 휴대폰으로 보낸 항목을 분류합니다</span></span><input type="checkbox" id="sw-auto"></label>
+      <label class="switch"><span>사진 AI 분석<br><span class="muted">사진 이미지를 AI로 보냅니다(AI로 보내지 않을 키워드가 있는 묶음은 제외)</span></span><input type="checkbox" id="sw-ai"></label>
+      <label class="switch"><span>주간 요약 메일<br><span class="muted" id="mail-next">매주 본인 Gmail로 요약을 보냅니다</span></span><input type="checkbox" id="sw-mail"></label>
+      <p class="muted">자동 처리가 꺼져 있으면 발송되지 않습니다.</p>
+      <button class="btn" id="mail-test" type="button" data-st="width:100%">지금 시험 메일 보내기</button></div>
+    <div class="section"><h2>보호</h2>
+      <p class="muted">AI로 보내지 않을 키워드(쉼표로 구분). 이 낱말이 들어간 묶음은 AI로 보내지 않습니다.</p>
+      <textarea id="kw"></textarea>
+      <button class="btn" id="kw-save" type="button" data-st="width:100%;margin-top:8px">키워드 저장</button>
+      <h2>번호 가리기 규칙</h2><div class="opt" id="masks"></div>
+      <h2>휴대폰 연결</h2><p class="muted">휴대폰을 바꾸거나 잃어버렸을 때 누르세요. 새 연결 파일이 Gmail로 가고, 지금 연결은 더 이상 쓸 수 없습니다.</p>
+      <button class="btn danger" id="reconnect" type="button" data-st="width:100%">휴대폰 연결 다시 하기</button></div>
+  </section>
+</main>
+
+<!-- ③ 상세 -->
+<div class="detail hidden" id="detail">
+  <div class="top"><button class="icon" id="d-back" type="button" aria-label="목록으로"><span data-icon="back"></span></button><span class="muted">상세</span></div>
+  <div id="d-hero"></div>
+  <div class="pad">
+    <h1 id="d-title"></h1>
+    <div class="meta" id="d-meta"></div>
+    <div class="band hidden" id="d-review"><span>확인 필요 · 제목을 가져오지 못했습니다. 메모를 적어 주세요.</span><button class="btn small" id="d-reviewed" type="button">확인</button></div>
+    <h2 data-st="font-size:15px;margin:16px 0 6px">카테고리</h2>
+    <select id="d-cat"></select>
+    <div id="d-summary-box"><h2 data-st="font-size:15px;margin:16px 0 6px">요약</h2><div class="text" id="d-summary"></div><div class="muted" id="d-keywords" data-st="margin-top:6px"></div></div>
+    <div id="d-desc-box" class="hidden"><h2 data-st="font-size:15px;margin:16px 0 6px">원문 설명</h2><div class="text muted" id="d-desc"></div></div>
+    <div id="d-ocr-box" class="hidden" data-st="margin-top:16px"><details><summary>사진 속 글자</summary><p class="muted">전화·계좌·카드·주민번호는 가려져 있습니다.</p><div class="text" id="d-ocr"></div></details></div>
+    <div id="d-ai-box" class="hidden" data-st="margin-top:12px"><button class="btn" id="d-ai" type="button" data-st="width:100%">이 사진만 AI 분석 요청</button></div>
+    <h2 data-st="font-size:15px;margin:16px 0 6px">내 메모</h2>
+    <textarea id="d-memo" maxlength="2000" placeholder="메모를 적어 두면 검색에서도 찾을 수 있습니다"></textarea>
+    <div class="opt" data-st="margin-top:12px"><a class="btn hidden" id="d-open" target="_blank" rel="noopener noreferrer" data-st="display:inline-flex;align-items:center;text-decoration:none">원본 열기</a>
+      <a class="btn hidden" id="d-drive" target="_blank" rel="noopener noreferrer" data-st="display:inline-flex;align-items:center;text-decoration:none">드라이브에서 열기</a></div>
+  </div>
+  <div class="bottom"><button class="btn danger" id="d-trash" type="button">휴지통으로</button><button class="btn primary" id="d-save" type="button">저장하고 목록으로</button></div>
+</div>
+
+<!-- 필터 시트 -->
+<div class="sheet-bg hidden" id="sheet-bg"></div>
+<div class="sheet hidden" id="sheet">
+  <h2>기간</h2><div class="opt" id="f-period"></div>
+  <h2>출처</h2><div class="opt" id="f-source"></div><div class="opt" id="f-origin" data-st="margin-top:8px"></div>
+  <h2>상태</h2><div class="opt" id="f-status"></div>
+  <div class="row" data-st="margin-top:20px"><button class="btn" id="f-reset" type="button" data-st="flex:1">초기화</button><button class="btn primary" id="f-apply" type="button" data-st="flex:2">적용</button></div>
+</div>
+
+<div class="toast hidden" id="toast"><span id="toast-msg"></span><button id="toast-undo" type="button" class="hidden">되돌리기</button></div>
+
+<nav>
+  <button type="button" data-tab="list" class="on"><span data-icon="box"></span>보관함</button>
+  <button type="button" data-tab="search"><span data-icon="search"></span>검색</button>
+  <button type="button" data-tab="trash"><span data-icon="trash"></span>휴지통</button>
+  <button type="button" data-tab="settings"><span data-icon="settings"></span>설정</button>
+</nav>
+
+<script src="app.7955d2e9.js"></script>
 </body></html>
