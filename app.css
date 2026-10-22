@@ -1,0 +1,6 @@
+html, body { margin: 0; min-height: 100vh; font: 16px system-ui, sans-serif; }
+body { padding: 12px 12px 40px; box-sizing: border-box; background: #fff; color: #111; }
+h1 { font-size: 18px; margin: 8px 0; }
+#out { white-space: pre-wrap; word-break: break-all; font-size: 13px; }
+#fill { position: fixed; left: 0; right: 0; bottom: 0; height: 28px; background: #1a73e8; color: #fff; font-size: 12px; line-height: 28px; text-align: center; }
+body::before { content: ""; position: fixed; left: 0; right: 0; top: 0; height: 6px; background: #1a73e8; }
